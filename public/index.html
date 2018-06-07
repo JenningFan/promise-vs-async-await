@@ -47,20 +47,17 @@
                     city
                 })
             },
-            getFaceResult() {
-                console.log(new Date().getTime())
-                this.getLocation(this.phoneNum)
-                    .then((res) => {
-                        console.log(new Date().getTime())
-                        const province = res.data.obj.province;
-                        const city = res.data.obj.city;
-                        return this.getFaceList(province, city);
-                    })
-                    .then((res) => {
-                        console.log(res)
-                        console.log(new Date().getTime())
-                        this.faceList = res.data.obj
-                    })
+            async getFaceResult() {
+                let a = new Date().getTime()
+                console.log(a);
+                const location = await this.getLocation(this.phoneNum);
+                let b = new Date().getTime() - a;
+                console.log(b);
+                const province = location.data.obj.province;
+                const city = location.data.obj.city;
+                const faceList = await this.getFaceList(province, city);
+                console.log(new Date().getTime() - a);
+                this.faceList = faceList.data.obj.faceList;
             }
         }
     })
