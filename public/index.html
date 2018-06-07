@@ -1,0 +1,69 @@
+<!DOCTYPE html>
+<html lang="en">
+<head>
+    <meta charset="UTF-8">
+    <title>Async/await</title>
+    <!-- CDN 引入vue 和 axios -->
+    <script src="https://cdn.jsdelivr.net/npm/vue"></script>
+    <script src="https://unpkg.com/axios/dist/axios.min.js"></script>
+</head>
+<body>
+<div id="app">
+
+    <!-- 输入框区域 -->
+    <div style="height:50px">
+        <input type="text" placeholder="请输入电话号码" v-model="phoneNum">
+        <button @click="getFaceResult">确定</button>
+    </div>
+
+    <!-- 充值面值 显示区域 -->
+    <div>
+        充值面值：
+        <span v-for="item in faceList" :key='item'>
+                {{item}}
+        </span>
+    </div>
+</div>
+
+<!-- js 代码区域 -->
+<script>
+    new Vue({
+        el: '#app',
+        data: {
+            phoneNum: '',
+            faceList: []
+        },
+        methods: {
+            //获取到城市信息
+            getLocation(phoneNum) {
+                return axios.post('phoneLocation', {
+                    phoneNum
+                })
+            },
+            // 获取面值
+            getFaceList(province, city) {
+                return axios.post('/faceList', {
+                    province,
+                    city
+                })
+            },
+            getFaceResult() {
+                console.log(new Date().getTime())
+                this.getLocation(this.phoneNum)
+                    .then((res) => {
+                        console.log(new Date().getTime())
+                        const province = res.data.obj.province;
+                        const city = res.data.obj.city;
+                        return this.getFaceList(province, city);
+                    })
+                    .then((res) => {
+                        console.log(res)
+                        console.log(new Date().getTime())
+                        this.faceList = res.data.obj
+                    })
+            }
+        }
+    })
+</script>
+</body>
+</html>
